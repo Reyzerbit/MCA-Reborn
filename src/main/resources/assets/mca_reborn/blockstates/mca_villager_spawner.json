@@ -1,0 +1,5 @@
+{
+	"variants": {
+		"": { "model": "mca_reborn:block/villager_spawner" }
+	}
+}

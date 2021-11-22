@@ -1,0 +1,39 @@
+    # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+    modLoader="javafml"
+    # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+    # Forge for 1.16.5 is version 36
+    loaderVersion="[36,)"
+    # The license for your mod. This is mandatory and allows for easier comprehension of your redistributive properties.
+    # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
+    license="All Rights Reserved"
+    # A URL to refer people to when problems occur with this mod
+    issueTrackerURL=""
+    # If the mods defined in this file should show as separate resource packs
+    showAsResourcePack=false
+
+    [[mods]]
+      modId="mca_reborn"
+      version="1.0.0.0"
+      displayName="Minecraft Comes Alive Reborn"
+      updateJSONURL=""
+      displayURL="reyzerbit.com"
+      logoFile="mca.png"
+      credits="Mezzodrinker, The_Nanobots, numerous others."
+      authors="WildBamaBoy, SheWolfDeadly, Reyzerbit"
+      description='''
+      Replaces villagers with more advanced humans, adds marriage, children, and more!
+      '''
+
+      [[dependencies.mca_reborn]]
+        modId="forge"
+        mandatory=true
+        versionRange="[36,)"
+        ordering="NONE"
+        side="BOTH"
+
+      [[dependencies.mca_reborn]]
+        modId="minecraft"
+        mandatory=true
+        versionRange="[1.16.5,1.17)"
+        ordering="NONE"
+        side="BOTH"

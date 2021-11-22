@@ -1,0 +1,32 @@
+{
+
+	"itemGroup.MCA": "MCA Reborn",
+
+	"item.mca_reborn.gold_wedding_ring": "Wedding Ring",
+	"item.mca_reborn.rose_gold_wedding_ring": "Rose Gold Wedding Ring",
+	"item.mca_reborn.gold_engagement_ring": "Engagement Ring",
+	"item.mca_reborn.rose_gold_engagement_ring": "Rose Gold Engagement Ring",
+	"item.mca_reborn.matchmakers_ring": "Matchmaker's Ring",
+	"item.mca_reborn.baby_boy": "Baby Boy",
+	"item.mca_reborn.baby_girl": "Baby Girl",
+	"item.mca_reborn.egg_male": "Spawn Male Villager",
+	"item.mca_reborn.egg_female": "Spawn Female Villager",
+	"item.mca_reborn.divorce_papers": "Divorce Papers",
+	"item.mca_reborn.rose_gold_ingot": "Rose Gold Ingot",
+	"item.mca_reborn.new_outfit": "New Outfit",
+	"item.mca_reborn.tombstone": "Tombstone",
+	"item.mca_reborn.rose_gold_dust": "Rose Gold Dust",
+	"item.mca_reborn.gold_dust": "Gold Dust",
+	"item.mca_reborn.whistle": "Whistle",
+	"item.mca_reborn.villager_editor": "Villager Editor",
+	"item.mca_reborn.egg_grim_reaper": "Spawn Grim Reaper",
+	"item.mca_reborn.staff_of_life": "Staff of Life",
+	"item.mca_reborn.book_of_death": "Death, and How to Cure It!",
+	"item.mca_reborn.book_of_romance": "Relationships and You",
+	"item.mca_reborn.book_of_family": "Managing Your Family Vol. XI",
+	"item.mca_reborn.book_of_rose_gold": "On Rose Gold",
+	"item.mca_reborn.book_of_infection": "Beware the Infection!",
+	"block.mca_reborn.rose_gold_ore": "Rose Gold Ore",
+	"block.mca_reborn.rose_gold_block": "Rose Gold Block"
+
+}
