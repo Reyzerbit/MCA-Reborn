@@ -115,32 +115,13 @@ public class RenderVillagerMCA<T extends MCAVillager> extends BipedRenderer<MCAV
             matrix.mulPose(new Quaternion(-entityRenderDispatcher.camera.getLookVector().y(), 0.0F, 1.0F, 0.0F));
             matrix.mulPose(new Quaternion(entityRenderDispatcher.camera.getLookVector().x(), 1.0F, 0.0F, 0.0F));
             matrix.scale(-LABEL_SCALE, -LABEL_SCALE, LABEL_SCALE);
-            //Disable GL Lighting
+            //GL11.glDisable(GL11.GL_LIGHTING);
             matrix.translate(-2.0F, 2.0F, -2.0F);
             drawTexturedRectangle(gui, (int)/*posX +*/ (heartsDrawn * 8) - 45, (int)/*posY -*/ 4, heartU, 0, 16, 16);
             
             matrix.popPose();
-            //Depth mask
-            //Enable GL Lighting
-
-            // What the original text looked like:
-            /*
-            GL11.glPushMatrix();{
-            	
-                GL11.glTranslatef((float) posX + 0.0F, (float) posY + villager.height + 1.0F, (float) posZ);
-                GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-                GL11.glRotatef(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
-                GL11.glScalef(-LABEL_SCALE, -LABEL_SCALE, LABEL_SCALE);
-                GL11.glDisable(GL11.GL_LIGHTING);
-                GL11.glTranslatef(-2.0F, 2.0F, -2.0F);
-                drawTexturedRectangle(gui, (int)posX + (heartsDrawn * 8) - 45, (int)posY - 4, heartU, 0, 16, 16);
-                
-            }
-            
-            GL11.glPopMatrix();
-            GL11.glDepthMask(true);
-            GL11.glEnable(GL11.GL_LIGHTING);
-            */
+            //GL11.glDepthMask(true);
+            //GL11.glEnable(GL11.GL_LIGHTING);
             
         }
         
@@ -178,7 +159,7 @@ public class RenderVillagerMCA<T extends MCAVillager> extends BipedRenderer<MCAV
         buffer.vertex(x + width, y + height, 0.0D).uv((u + width) * f, ((v + height) * f1)).endVertex();
         buffer.vertex(x + width, y + 0,	0.0D).uv((u + width) * f, ((v + 0) * f1)).endVertex();
         buffer.vertex(x + 0, y + 0, 0.0D).uv((u + 0) * f, ((v + 0) * f1)).endVertex();
-        tessellator.end(); /*.draw();*/
+        tessellator.end();
         
     }
 
@@ -202,13 +183,9 @@ public class RenderVillagerMCA<T extends MCAVillager> extends BipedRenderer<MCAV
     protected void setupRotations(MCAVillager entityLiving, MatrixStack matrix, float p_77043_2_, float rotationYaw, float partialTicks) {
     	
         if (entityLiving.isSleeping()) {
-        	
-            //GlStateManager.rotate(entityLiving.getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
-            //GlStateManager.rotate(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
-            //GlStateManager.rotate(270.0F, 0.0F, 1.0F, 0.0F);
             
             matrix.mulPose(entityLiving.getBedOrientation().getRotation());
-            matrix.mulPose(new Quaternion(/*this.getDeathMaxRotation(entityLiving)*/ 0.0F, 0.0F, 0.0F, 1.0F));
+            matrix.mulPose(new Quaternion(0.0F, 0.0F, 0.0F, 1.0F));
             matrix.mulPose(new Quaternion(270.0F, 0.0F, 1.0F, 0.0F));
             
             rotationYaw = 180.0f;

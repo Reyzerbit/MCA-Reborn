@@ -17,18 +17,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class NameBabyScreen extends Screen {
-	
-    //private PlayerEntity player;
 
     private TextFieldWidget babyNameTextField;
     private Button doneButton;
     private Button randomButton;
     private Baby baby;
 
-    public NameBabyScreen(/*PlayerEntity player, */ItemStack babyStack) {
+    public NameBabyScreen(ItemStack babyStack) {
     	
         super(new StringTextComponent("Name Baby"));
-        //this.player = player;
 
         if (babyStack.getItem() instanceof Baby) this.baby = (Baby) babyStack.getItem();
         
@@ -42,16 +39,7 @@ public class NameBabyScreen extends Screen {
         babyNameTextField.tick();
         
         doneButton.active = !babyNameTextField.getValue().isEmpty();
-
-        /*
-        if (babyNameTextField != null) {
-        	
-            //babyNameTextField.updateCursorCounter();
-            babyNameTextField.moveCursorToEnd();
-            doneButton.active = !babyNameTextField.getMessage().getContents().isEmpty();
-            
-        }
-        */
+        randomButton.active = true;
         
     }
 
@@ -73,7 +61,7 @@ public class NameBabyScreen extends Screen {
     	doneButton = addButton(new Button(width / 2 - 40, height / 2 - 10, 80, 20, new StringTextComponent(MCA.getLocalizer().localize("gui.button.done")), button -> {
 
             Network.INSTANCE.sendToServer(new BabyName(babyNameTextField.getValue().trim()));
-            //button.playDownSound(new SoundHandler());
+            //doneButton.playDownSound(new SoundHandler());
             onClose();
         	
         }));
@@ -82,7 +70,7 @@ public class NameBabyScreen extends Screen {
     	randomButton = addButton(new Button(width / 2 + 105, height / 2 - 60, 60, 20, new StringTextComponent(MCA.getLocalizer().localize("gui.button.random")), button -> {
     		
     		babyNameTextField.setValue(API.getRandomName(baby.getGender()));
-    		//button.playDownSound(new SoundHandler());
+    		//randomButton.playDownSound(new SoundHandler());
     	
     	}));
         
@@ -103,7 +91,10 @@ public class NameBabyScreen extends Screen {
         
     }
 
+    // TODO On another day
+    
     /*
+     * 
     @Override
 	public boolean keyPressed(int key, int x, int y) {
     	
@@ -111,11 +102,7 @@ public class NameBabyScreen extends Screen {
         return super.keyPressed(key, x, y);
         
     }
-    */
-
-    // TODO On another day
     
-    /*
     @Override
 	public boolean handleComponentClicked(Style style) {
     	

@@ -60,19 +60,29 @@ public class MCA {
     	
     	initMCAItemGroup();
 
+    	// Buses
     	modBus = FMLJavaModLoadingContext.get().getModEventBus();
     	forgeBus = MinecraftForge.EVENT_BUS;
 
     	modBus.register(this);
     	//bus.register(new EventHooks());
     	
+    	// Init Main
     	modBus.addListener(this::commonSetup);
     	modBus.addListener(this::clientSetup);
     	modBus.addListener(this::serverSetup);
     	
+    	// Init Network
     	modBus.addListener(Network::setupNetwork);
+
+    	// Mod Event Listeners
     	modBus.addListener(EventHooks::attributes);
     	
+    	// Forge Event Listeners
+    	forgeBus.addListener(EventHooks::onItemToss);
+    	forgeBus.addListener(EventHooks::onPlayerRespawn);
+    	forgeBus.addListener(EventHooks::onLivingDeath);
+    	forgeBus.addListener(EventHooks::onEntityInteractSpecific);
     	forgeBus.addListener(EventPriority.HIGH, OreGeneration::generateOres);
         
         ItemInit.ITEMS.register(modBus);

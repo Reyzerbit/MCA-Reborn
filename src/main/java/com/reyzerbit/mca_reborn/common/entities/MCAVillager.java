@@ -127,6 +127,12 @@ public class MCAVillager extends VillagerEntity {
 		super(entityType, world);
 		
         inventory = new MCAInventory(this);
+        
+        CompoundNBT parents = new CompoundNBT();
+        parents.putUUID("parent1UUID", Constants.ZERO_UUID);
+        parents.putUUID("parent2UUID", Constants.ZERO_UUID);
+        parents.putString("parent1Name", "");
+        parents.putString("parent2Name", "");
 		
         entityData.define(VILLAGER_NAME, "");
         entityData.define(TEXTURE, "");
@@ -139,7 +145,7 @@ public class MCAVillager extends VillagerEntity {
         entityData.define(SPOUSE_UUID, Optional.of(Constants.ZERO_UUID));
         entityData.define(MARRIAGE_STATE, EnumMarriageState.NOT_MARRIED.getId());
         entityData.define(IS_PROCREATING, false);
-        entityData.define(PARENTS, new CompoundNBT());
+        entityData.define(PARENTS, parents);
         entityData.define(IS_INFECTED, false);
         entityData.define(AGE_STATE, EnumAgeState.ADULT.getId());
         entityData.define(ACTIVE_CHORE, EnumChore.NONE.getId());

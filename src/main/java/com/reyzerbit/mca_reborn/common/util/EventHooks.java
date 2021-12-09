@@ -4,31 +4,50 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
+import com.reyzerbit.mca_reborn.client.gui.VillagerEditorScreen;
+import com.reyzerbit.mca_reborn.client.gui.VillagerInteractionScreen;
 import com.reyzerbit.mca_reborn.common.Constants;
 import com.reyzerbit.mca_reborn.common.MCA;
 import com.reyzerbit.mca_reborn.common.entities.MCAVillager;
 import com.reyzerbit.mca_reborn.common.init.EntityInit;
+import com.reyzerbit.mca_reborn.common.init.ItemInit;
+import com.reyzerbit.mca_reborn.common.init.VillagerInit;
+import com.reyzerbit.mca_reborn.common.items.Baby;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class EventHooks {
 	
     // Maps a player UUID to the itemstack of their held ItemBaby. Filled when a player dies so the baby is never lost.
-    public Map<UUID, ItemStack> limbo = new HashMap<>();
+    public static Map<UUID, ItemStack> limbo = new HashMap<>();
+    
+    // List of insults for when a baby is thrown
+    private static String[] insultsDrop = {"You monster! I can't believe you'd throw a baby on the floor...",
+    		"What a terrible parent! Throwing your baby on the floor like that...",
+    		"Of all the terrible people in the world, you are the most terrible! Don't throw your baby on the floor!"};
 
     // Now handled in main MCA Class
     /*
@@ -51,7 +70,7 @@ public class EventHooks {
     }
 
     @SubscribeEvent
-    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
     	
         if (!MCA.updateAvailable) return;
         StringTextComponent updateMessage = new StringTextComponent(Constants.Color.DARKGREEN + "An update for Minecraft Comes Alive is available: v" + MCA.latestVersion);
@@ -69,7 +88,7 @@ public class EventHooks {
     }
 
     @SubscribeEvent
-    public void onWorldUnload(WorldEvent.Unload event) {
+    public static void onWorldUnload(WorldEvent.Unload event) {
     	
         // Only send crash reports on unloading the overworld. This will never change based on other mods installed
         // and ensures only one crash report is sent per instance.
@@ -78,7 +97,7 @@ public class EventHooks {
     }
 
     @SubscribeEvent
-    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+    public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
     	
         World world = event.getWorld();
         Entity entity = event.getEntity();
@@ -101,6 +120,79 @@ public class EventHooks {
         
     }
 
+    @SubscribeEvent
+    public static void onItemToss(ItemTossEvent event) {
+    	
+        ItemStack stack = event.getEntityItem().getItem();
+        
+        if (stack.getItem() instanceof Baby) {
+        	
+        	event.getPlayer().sendMessage(new StringTextComponent(insultsDrop[ThreadLocalRandom.current().nextInt(0, insultsDrop.length)]).withStyle(TextFormatting.RED), null);
+        	event.getPlayer().inventory.placeItemBackInInventory(event.getPlayer().level, stack);
+            event.setCanceled(true);
+            
+        }
+        
+    }
+
+    @SubscribeEvent
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+    	
+        // When players respawn check to see if their baby was saved in limbo. Add it back to their inventory.
+        if (limbo.containsKey(event.getPlayer().getUUID())) {
+        	
+            event.getPlayer().inventory.add(limbo.get(event.getPlayer().getUUID()));
+            limbo.remove(event.getPlayer().getUUID());
+            
+        }
+        
+    }
+
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event) {
+    	
+        // If a player dies while holding a baby, remember it until they respawn.
+        if (event.getEntityLiving() instanceof PlayerEntity) {
+        	
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            Optional<ItemStack> babyStack = player.inventory.items.stream().filter(s -> s.getItem() instanceof Baby).findFirst();
+            babyStack.ifPresent(s -> limbo.put(player.getUUID(), babyStack.get()));
+            
+        }
+        
+    }
+
+    @SubscribeEvent
+    public static void onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+    	
+        if (event.getTarget() instanceof MCAVillager && event.getPlayer() != null) {
+        	
+            PlayerEntity player = event.getPlayer();
+            MCAVillager villager = (MCAVillager)event.getTarget();
+            
+            Minecraft.getInstance().setScreen(null);
+
+            if (villager.getVillagerData().getProfession() == VillagerInit.BANDIT) {
+            	
+                event.setResult(Result.DENY);
+                
+            } else if (event.getWorld().isClientSide && event.getPlayer().getMainHandItem().getItem() == ItemInit.VILLAGER_EDITOR.get()) {
+            	
+            	Minecraft.getInstance().setScreen(new VillagerEditorScreen((MCAVillager) event.getTarget(), event.getPlayer()));
+            	event.setResult(Result.ALLOW);
+                
+            } else {
+            	
+                player.awardStat(Stats.TALKED_TO_VILLAGER);
+                Minecraft.getInstance().setScreen(new VillagerInteractionScreen(event.getEntity().getName(), (MCAVillager) event.getTarget(), event.getPlayer()));
+                event.setResult(Result.ALLOW);
+                
+            }
+            
+        }
+        
+    }
+
     //TODO All this
     /*
     @SubscribeEvent
@@ -118,35 +210,6 @@ public class EventHooks {
     }
 
     @SubscribeEvent
-    public void onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
-    	
-        if (event.getTarget() instanceof EntityVillagerMCA && event.getEntityPlayer() != null) {
-        	
-            EntityPlayer player = event.getEntityPlayer();
-            EntityVillagerMCA villager = (EntityVillagerMCA)event.getTarget();
-
-            if (villager.getProfessionForge() == VillagerInit.bandit) {
-            	
-                event.setResult(Event.Result.DENY);
-                
-            } else if (player.getHeldItemMainhand().getItem() == ItemsMCA.VILLAGER_EDITOR) {
-            	
-                player.openGui(MCA.getInstance(), Constants.GUI_ID_VILLAGEREDITOR, player.world, villager.getEntityId(), 0, 0);
-                event.setResult(Event.Result.ALLOW);
-                
-            } else {
-            	
-                player.addStat(StatList.TALKED_TO_VILLAGER);
-                player.openGui(MCA.getInstance(), Constants.GUI_ID_INTERACT, player.world, villager.getEntityId(), 0, 0);
-                event.setResult(Event.Result.ALLOW);
-                
-            }
-            
-        }
-        
-    }
-
-    @SubscribeEvent
     public void onEntityDamaged(LivingDamageEvent event) {
         if (event.getEntity() instanceof EntityVillagerMCA) {
             EntityVillagerMCA villager = (EntityVillagerMCA)event.getEntity();
@@ -159,15 +222,6 @@ public class EventHooks {
                         ((EntityVillagerMCA)e).getProfessionForge() == VillagerInit.guard)
                 .forEach(e -> ((EntityVillagerMCA) e).setAttackTarget((EntityLivingBase)source));
             }
-        }
-    }
-
-    @SubscribeEvent
-    public void onItemToss(ItemTossEvent event) {
-        ItemStack stack = event.getEntityItem().getItem();
-        if (stack.getItem() instanceof Baby) {
-            event.getPlayer().addItemStackToInventory(stack);
-            event.setCanceled(true);
         }
     }
 
@@ -204,25 +258,6 @@ public class EventHooks {
                 MCAServer.get().startSpawnReaper();
                 for (int i = 0; i < 2; i++) event.getWorld().setBlockToAir(new BlockPos(x, y - i, z));
             }
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        // When players respawn check to see if their baby was saved in limbo. Add it back to their inventory.
-        if (limbo.containsKey(event.player.getUniqueID())) {
-            event.player.inventory.addItemStackToInventory(limbo.get(event.player.getUniqueID()));
-            limbo.remove(event.player.getUniqueID());
-        }
-    }
-
-    @SubscribeEvent
-    public void onLivingDeath(LivingDeathEvent event) {
-        // If a player dies while holding a baby, remember it until they respawn.
-        if (event.getEntityLiving() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer)event.getEntityLiving();
-            Optional<ItemStack> babyStack = player.inventory.mainInventory.stream().filter(s -> s.getItem() instanceof Baby).findFirst();
-            babyStack.ifPresent(s -> limbo.put(player.getUniqueID(), babyStack.get()));
         }
     }
 

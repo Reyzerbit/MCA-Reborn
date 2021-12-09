@@ -27,29 +27,6 @@ public class ItemInit {
 	//REGISTER
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MCA.MODID);
 	
-	/*
-	public static final Item WEDDING_RING = new ItemWeddingRing().setMaxStackSize(1);
-    public static final Item WEDDING_RING_RG = new ItemWeddingRing().setMaxStackSize(1);
-    public static final Item ENGAGEMENT_RING = new ItemEngagementRing().setMaxStackSize(1);
-    public static final Item ENGAGEMENT_RING_RG = new ItemEngagementRing().setMaxStackSize(1);
-    public static final Item MATCHMAKERS_RING = new ItemMatchmakersRing().setMaxStackSize(2);
-    public static final Item BABY_BOY = new ItemBaby(true);
-    public static final Item BABY_GIRL = new ItemBaby(false);
-    public static final Item ROSE_GOLD_INGOT = new Item().setUnlocalizedName("rose_gold_ingot");
-    public static final Item ROSE_GOLD_DUST = new Item().setUnlocalizedName("rose_gold_dust");
-    public static final Item GOLD_DUST = new Item().setUnlocalizedName("gold_dust");
-    public static final Item VILLAGER_EDITOR = new ItemVillagerEditor();
-    public static final Item STAFF_OF_LIFE = new ItemStaffOfLife();
-    public static final Item WHISTLE = new ItemWhistle();
-    public static final ItemSpawnEgg EGG_MALE = new ItemSpawnEgg(true);
-    public static final ItemSpawnEgg EGG_FEMALE = new ItemSpawnEgg(false);
-    public static final ItemGuideBook BOOK_DEATH = new ItemGuideBook();
-    public static final ItemGuideBook BOOK_ROMANCE = new ItemGuideBook();
-    public static final ItemGuideBook BOOK_FAMILY = new ItemGuideBook();
-    public static final ItemGuideBook BOOK_ROSE_GOLD = new ItemGuideBook();
-    public static final ItemGuideBook BOOK_INFECTION = new ItemGuideBook();
-    */
-	
 	//ITEMS
 	public static final RegistryObject<Item> GOLD_WEDDING_RING = register("gold_wedding_ring", new WeddingRing(new Item.Properties().tab(MCA.creativeTab)));
 	public static final RegistryObject<Item> ROSE_GOLD_WEDDING_RING = register("rose_gold_wedding_ring", new WeddingRing(new Item.Properties().tab(MCA.creativeTab)));
